@@ -30,13 +30,13 @@ public class StatePanel extends JPanel {
     private static Font monoFont = new Font(Font.MONOSPACED, Font.BOLD, 11);
     private static int size = 70;
 
-    public StatePanel(String state, int x, int y) {
+    public StatePanel(String state) {
         this.setDoubleBuffered(true);
         this.setOpaque(false);
         this.state = state;
         cur = false;
-        this.x = x;
-        this.y = y;
+        this.x = 0;
+        this.y = 0;
     }
 
     public void setCur(boolean cur) {

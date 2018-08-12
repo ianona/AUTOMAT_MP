@@ -35,12 +35,12 @@ public class MachineView extends JFrame{
     }
     
     public void initMachine(){
-        StatePanel sp1 = new StatePanel("SAMPLE1",0,0);
+        StatePanel sp1 = new StatePanel("SAMPLE1");
         sp1.setBounds(0, 0, size,size);
         sp1.setCur(true);
         this.add(sp1);
         
-        StatePanel sp2 = new StatePanel("SAMPLE2",0,0);
+        StatePanel sp2 = new StatePanel("SAMPLE2");
         sp2.setBounds((size*1)+40, 0, size,size);
         this.add(sp2);
     }
