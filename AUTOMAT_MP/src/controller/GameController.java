@@ -17,7 +17,6 @@ public class GameController {
     private String move;
     private String[] ship;
     
-    @SuppressWarnings("empty-statement")
     GameController(){
         earth = new String[]{"human1","human2","cow","grain","lion"};
         mars = new String[]{"","","","",""};
