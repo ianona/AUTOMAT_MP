@@ -2,10 +2,38 @@ import wx
 import time
 
 class State():
-    def __init__(self, transition, left, right):
-        self.transition = transition
-        self.left = left
-        self.right = right
+    def __init__(self, transition, earth, mars):
+        self.transition = ''
+        if len(transition) == 0:
+            self.transition = "none"
+        else:
+            for i in transition:
+                self.transition += i
+
+        self.left = ''
+        for i in earth:
+            self.left += i.type
+
+        self.right = ''
+        for i in mars:
+            self.right += i.type
+
+class Item(wx.StaticBitmap):
+    def __init__(self, type, parent, onRocket, position, filename):
+        super(Item, self).__init__(parent, -1, wx.Bitmap(wx.Image(filename, wx.BITMAP_TYPE_ANY).Scale(50,50)),position)
+
+        self.filename = filename
+        self.type=type
+        self.onRocket = onRocket
+
+    def __repr__(self):
+        return self.type
+
+    def __str__(self):
+        return self.type
+
+    def SetNewParent(self, p):
+        self.SetParent(p)
 
 class MainFrame(wx.Frame):
     def __init__(self, *args, **kwargs):
@@ -20,15 +48,15 @@ class MainFrame(wx.Frame):
         self.Y = 150
 
         # to be used for FSM
-        self.left = "BGLCR"
-        self.right = ""
-        self.transition = None
+        self.EARTH = []        
+        self.MARS = []
+        self.transition = []
         self.states = []
         # add start state
-        self.states.append(State(self.transition,self.left,self.right))
+        self.states.append(State(self.transition,self.EARTH,self.MARS))
 
         # intialize GUI
-        self.initialize()
+        self.initialize()  
 
     def initialize(self):
         self.SetSize(700,500)
@@ -44,10 +72,13 @@ class MainFrame(wx.Frame):
         bgImg = wx.Bitmap(bgImg)
         self.bg = wx.StaticBitmap(self.mainPanel, -1, bgImg, (0,0), (700,500))
 
+        # ROCKET PANEL
+        self.rocketPnl = wx.Panel(self.mainPanel,-1,(self.X,self.Y),(255,155))
+
         # ROCKET
         rocketImg = wx.Image("rocket"+extension, wx.BITMAP_TYPE_ANY)
         rocketImg = wx.Bitmap(rocketImg)
-        self.rocket = wx.StaticBitmap(self.mainPanel, -1, rocketImg, (self.X,self.Y))
+        self.rocket = wx.StaticBitmap(self.rocketPnl, -1, rocketImg, (0,0))
 
         # GO RIGHT BUTTON
         rightBtnImg = wx.Image("Rbtn"+extension, wx.BITMAP_TYPE_ANY)
@@ -71,14 +102,20 @@ class MainFrame(wx.Frame):
         pnlImg = wx.Bitmap(pnlImg)
         self.leftPnl = wx.StaticBitmap(self.mainPanel, -1, pnlImg, (0,310))
 
-        # ICONS
+        '''
+        # add icons
         self.leftIcons = 0
-        self.human1 = self.addIcon(self.currentPosition,"boy",extension)
-        self.human2 = self.addIcon(self.currentPosition,"girl",extension)
-        self.lion = self.addIcon(self.currentPosition,"lion",extension)
-        self.cow = self.addIcon(self.currentPosition,"cow",extension)
-        self.rice = self.addIcon(self.currentPosition,"rice",extension)
+        for i in self.EARTH:
+            self.addIcon("L",i.filename)
+        '''
 
+        # add to earth
+        self.EARTH.append(self.addIcon("H","L","boy"+extension))
+        self.EARTH.append(self.addIcon("H","L","girl"+extension))
+        self.EARTH.append(self.addIcon("L","L","lion"+extension))
+        self.EARTH.append(self.addIcon("C","L","cow"+extension))
+        self.EARTH.append(self.addIcon("R","L","rice"+extension))
+        
         # GRAY PANELS
         pnlImg = wx.Image("grayPnl2"+extension, wx.BITMAP_TYPE_ANY)
         pnlImg = wx.Bitmap(pnlImg)
@@ -92,20 +129,33 @@ class MainFrame(wx.Frame):
 
         # PANEL FOR FSM
         self.FSM = wx.Panel(self.mainPanel,-1,pos=(0,390),size=(700,100))
-        self.FSM.Bind(wx.EVT_PAINT, self.drawStates) 
+        self.FSM.Bind(wx.EVT_PAINT, self.drawStates)
 
         self.Centre() 
         self.Show(True)
         self.SetPosition((300,200))
 
-    def addIcon(self,side,file,extension):
-        ico = wx.Image(file+extension, wx.BITMAP_TYPE_ANY).Scale(50,50)
-        ico = wx.Bitmap(ico)
-
+    def addIcon(self,type,side,filename):
         # ADD ICONS TO APPROPRIATE PANEL
         if side == "L":
-            self.leftIcons += 1
-            return wx.StaticBitmap(self.mainPanel, -1, ico, ((self.leftIcons-1) * 50,325))
+            item = Item(type, self.mainPanel, False, ((len(self.EARTH)) * 50,325), filename)
+            item.Bind(wx.EVT_LEFT_DOWN,self.clickItem)
+            return item
+        elif side == "R":
+            item = Item(type, self.mainPanel, False, ((len(self.EARTH)*50) + 440,325), filename).Bind(wx.EVT_LEFT_DOWN,self.clickItem)
+            item.Bind(wx.EVT_LEFT_DOWN,self.clickItem)
+            return item
+
+    def clickItem(self,e):
+        item = e.GetEventObject()
+        if not item.onRocket:
+            self.moveToRocket(item)
+            item.onRocket = True
+
+    def moveToRocket(self, Item):
+        #Item.Parent = None
+        #Item.SetPosition((100,200))
+        print("PORK")
 
     def animate(self,e):
         self.timer.Start(10)
@@ -119,7 +169,7 @@ class MainFrame(wx.Frame):
             self.XrightPnl.Hide()
             if self.X != 450:
                 self.X+=10
-                self.rocket.Move(self.X,self.Y)
+                self.rocketPnl.Move(self.X,self.Y)
             else:
                 self.timer.Stop()
                 self.currentPosition = "R"
@@ -131,14 +181,14 @@ class MainFrame(wx.Frame):
             self.XrightPnl.Show()
             if self.X != 0:
                 self.X-=10
-                self.rocket.Move(self.X,self.Y)
+                self.rocketPnl.Move(self.X,self.Y)
             else:
                 self.timer.Stop()
                 self.currentPosition = "L"
 
                 # adds new state everytime it returns to earth
                 # add new state and refresh
-                self.states.append(State(self.transition,self.left,self.right))
+                self.states.append(State(self.transition,self.EARTH,self.MARS))
                 self.Refresh()
 
     def drawStates(self,e):
