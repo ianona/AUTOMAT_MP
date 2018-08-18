@@ -40,9 +40,11 @@ public class RocketPanel extends JPanel implements ActionListener {
     private int velX = 1, velY = 1;
     String mode;
     private List<ItemPanel> items;
+    private GameView gv;
 
-    public RocketPanel(Rectangle r) {
-
+    public RocketPanel(Rectangle r, GameView gv) {
+        this.gv = gv;
+        
         try {
             rocket = new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/rocket.png"))).getImage();
             prepareImage(rocket, this);
@@ -94,6 +96,10 @@ public class RocketPanel extends JPanel implements ActionListener {
     public ItemPanel getItem(int i){
         return items.get(i);
     }
+    
+    public List<ItemPanel> getItems(){
+        return items;
+    }
 
     public String getMode() {
         return mode;
@@ -126,7 +132,8 @@ public class RocketPanel extends JPanel implements ActionListener {
             } else {
                 mode = "right";
             }
-
+            gv.updateController();
+            gv.emptyRocket();
             repaint();
         }
 

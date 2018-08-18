@@ -21,6 +21,7 @@ public class AUTOMAT_MP {
         GameController gc = new GameController();
         GameView gv = new GameView(gc);
         MachineView mv = new MachineView(gc);
+        gc.attach(mv);
     }
     
 }

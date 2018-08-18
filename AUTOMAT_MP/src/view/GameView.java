@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
 public class GameView extends JFrame {
 
     private GameController controller;
-    private JLabel bgImage, rightPnl, leftPnl, RBtn, LBtn, helpBtn, infoBtn;
+    private JLabel bgImage, rightPnl, leftPnl, RBtn, LBtn, helpBtn, infoBtn, leftPnl2, rightPnl2;
     private JLayeredPane mainPane;
     private RocketPanel rocketPnl;
     private ItemPanel human1, human2, lion, cow, rice;
@@ -49,6 +49,8 @@ public class GameView extends JFrame {
             bgImage = new JLabel(new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/bg.png"))));
             leftPnl = new JLabel(new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/panel.png"))));
             rightPnl = new JLabel(new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/panel2.png"))));
+            leftPnl2 = new JLabel(new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/grayPnl.png"))));
+            rightPnl2 = new JLabel(new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/grayPnl2.png"))));
             RBtn = new JLabel(new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/Rbtn.png"))));
             LBtn = new JLabel(new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/LBtn.png"))));
             helpBtn = new JLabel(new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/help.png"))));
@@ -60,11 +62,19 @@ public class GameView extends JFrame {
         bgImage.setBounds(0, 0, 700, 500);
         leftPnl.setBounds(0, 350, 297, 77);
         rightPnl.setBounds(410, 350, 297, 77);
+        leftPnl2.setBounds(0, 350, 297, 77);
+        rightPnl2.setBounds(410, 350, 297, 77);
+        leftPnl2.setVisible(false);
+        rightPnl2.setVisible(true);
+        leftPnl2.addMouseListener(new grayPnl_click());
+        rightPnl2.addMouseListener(new grayPnl_click());
         mainPane.add(bgImage, new Integer(0));
         mainPane.add(leftPnl, new Integer(100));
         mainPane.add(rightPnl, new Integer(100));
+        mainPane.add(leftPnl2, new Integer(200));
+        mainPane.add(rightPnl2, new Integer(200));
 
-        rocketPnl = new RocketPanel(leftSide);
+        rocketPnl = new RocketPanel(leftSide, this);
         rocketPnl.setBounds(0, 60, 700, 260);
         mainPane.add(rocketPnl, new Integer(200));
         rocketPnl.addMouseListener(new Item_click_rocket());
@@ -78,11 +88,11 @@ public class GameView extends JFrame {
         RBtn.addMouseListener(new RBtn_click());
         LBtn.addMouseListener(new LBtn_click());
 
-        human1 = new ItemPanel("human", "resources/boy.png");
-        human2 = new ItemPanel("human", "resources/girl.png");
-        lion = new ItemPanel("human", "resources/lion.png");
-        cow = new ItemPanel("human", "resources/cow.png");
-        rice = new ItemPanel("human", "resources/rice.png");
+        human1 = new ItemPanel("human1", "resources/boy.png");
+        human2 = new ItemPanel("human2", "resources/girl.png");
+        lion = new ItemPanel("lion", "resources/lion.png");
+        cow = new ItemPanel("cow", "resources/cow.png");
+        rice = new ItemPanel("rice", "resources/rice.png");
 
         human1.setBounds(0, 365, 50, 50);
         human2.setBounds(50, 365, 50, 50);
@@ -114,6 +124,88 @@ public class GameView extends JFrame {
         this.setResizable(false);
     }
 
+    public void emptyRocket() {
+        if (rocketPnl.getMode() == "right") {
+            for (int i = rocketPnl.getItems().size() - 1; i > -1; i--) {
+                ItemPanel cur = rocketPnl.getItem(i);
+                rocketPnl.removeItem(cur);
+                switch (cur.getFilename()) {
+                    case "resources/boy.png":
+                        human1.setBounds(0, 365, 50, 50);
+                        human1.setVisible(true);
+                        break;
+                    case "resources/girl.png":
+                        human2.setBounds(50, 365, 50, 50);
+                        human2.setVisible(true);
+                        break;
+                    case "resources/lion.png":
+                        lion.setBounds(100, 365, 50, 50);
+                        lion.setVisible(true);
+                        break;
+                    case "resources/cow.png":
+                        cow.setBounds(150, 365, 50, 50);
+                        cow.setVisible(true);
+                        break;
+                    case "resources/rice.png":
+                        rice.setBounds(200, 365, 50, 50);
+                        rice.setVisible(true);
+                        break;
+                }
+                rocketPnl.repaint();
+            }
+        } else if (rocketPnl.getMode() == "left") {
+            for (int i = rocketPnl.getItems().size() - 1; i > -1; i--) {
+                ItemPanel cur = rocketPnl.getItem(i);
+                rocketPnl.removeItem(cur);
+                switch (cur.getFilename()) {
+                    case "resources/boy.png":
+                        human1.setBounds(440, 365, 50, 50);
+                        human1.setVisible(true);
+                        break;
+                    case "resources/girl.png":
+                        human2.setBounds(490, 365, 50, 50);
+                        human2.setVisible(true);
+                        break;
+                    case "resources/lion.png":
+                        lion.setBounds(540, 365, 50, 50);
+                        lion.setVisible(true);
+                        break;
+                    case "resources/cow.png":
+                        cow.setBounds(590, 365, 50, 50);
+                        cow.setVisible(true);
+                        break;
+                    case "resources/rice.png":
+                        rice.setBounds(640, 365, 50, 50);
+                        rice.setVisible(true);
+                        break;
+                }
+                rocketPnl.repaint();
+            }
+        }
+    }
+
+    public void updateController() {
+        String move = "";
+        if (rocketPnl.getMode() == "right") {
+            move = "left";
+        } else {
+            move = "right";
+        }
+
+        if (rocketPnl.getItems().size() == 1) {
+            controller.moveShip(rocketPnl.getItem(0).getType(), move);
+        } else if (rocketPnl.getItems().size() == 2) {
+            controller.moveShip(rocketPnl.getItem(0).getType(), rocketPnl.getItem(1).getType(), move);
+        }
+
+        if (!controller.checkPlanets(move)) {
+            JOptionPane.showMessageDialog(null, "Game Over! Program terminating...");
+            System.exit(0);
+        }
+
+        controller.updateMachine(move);
+    }
+
     class RBtn_click implements MouseListener {
 
         @Override
@@ -121,6 +213,8 @@ public class GameView extends JFrame {
             rocketPnl.animate(rightSide);
             RBtn.setVisible(false);
             LBtn.setVisible(true);
+            rightPnl2.setVisible(false);
+            leftPnl2.setVisible(true);
         }
 
         @Override
@@ -147,6 +241,8 @@ public class GameView extends JFrame {
             rocketPnl.animate(leftSide);
             LBtn.setVisible(false);
             RBtn.setVisible(true);
+            rightPnl2.setVisible(true);
+            leftPnl2.setVisible(false);
         }
 
         @Override
@@ -203,68 +299,72 @@ public class GameView extends JFrame {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (rocketPnl.getMode() == "right") {
-                ItemPanel clicked = null;
-                if (e.getX() >= 100 && e.getX() <= 145 && e.getY() >= 180 && e.getY() <= 225) {
-                    clicked = rocketPnl.getItem(0);
-                } else if (e.getX() >= 150 && e.getX() <= 195 && e.getY() >= 180 && e.getY() <= 225) {
-                    clicked = rocketPnl.getItem(1);
+            try {
+                if (rocketPnl.getMode() == "right") {
+                    ItemPanel clicked = null;
+                    if (e.getX() >= 100 && e.getX() <= 145 && e.getY() >= 180 && e.getY() <= 225) {
+                        clicked = rocketPnl.getItem(0);
+                    } else if (e.getX() >= 150 && e.getX() <= 195 && e.getY() >= 180 && e.getY() <= 225) {
+                        clicked = rocketPnl.getItem(1);
+                    }
+                    rocketPnl.removeItem(clicked);
+                    switch (clicked.getFilename()) {
+                        case "resources/boy.png":
+                            human1.setBounds(0, 365, 50, 50);
+                            human1.setVisible(true);
+                            break;
+                        case "resources/girl.png":
+                            human2.setBounds(50, 365, 50, 50);
+                            human2.setVisible(true);
+                            break;
+                        case "resources/lion.png":
+                            lion.setBounds(100, 365, 50, 50);
+                            lion.setVisible(true);
+                            break;
+                        case "resources/cow.png":
+                            cow.setBounds(150, 365, 50, 50);
+                            cow.setVisible(true);
+                            break;
+                        case "resources/rice.png":
+                            rice.setBounds(200, 365, 50, 50);
+                            rice.setVisible(true);
+                            break;
+                    }
+                    rocketPnl.repaint();
+                } else if (rocketPnl.getMode() == "left") {
+                    ItemPanel clicked = null;
+                    if (e.getX() >= 515 && e.getX() <= 555 && e.getY() >= 180 && e.getY() <= 225) {
+                        clicked = rocketPnl.getItem(0);
+                    } else if (e.getX() >= 565 && e.getX() <= 610 && e.getY() >= 180 && e.getY() <= 225) {
+                        clicked = rocketPnl.getItem(1);
+                    }
+                    rocketPnl.removeItem(clicked);
+                    switch (clicked.getFilename()) {
+                        case "resources/boy.png":
+                            human1.setBounds(440, 365, 50, 50);
+                            human1.setVisible(true);
+                            break;
+                        case "resources/girl.png":
+                            human2.setBounds(490, 365, 50, 50);
+                            human2.setVisible(true);
+                            break;
+                        case "resources/lion.png":
+                            lion.setBounds(540, 365, 50, 50);
+                            lion.setVisible(true);
+                            break;
+                        case "resources/cow.png":
+                            cow.setBounds(590, 365, 50, 50);
+                            cow.setVisible(true);
+                            break;
+                        case "resources/rice.png":
+                            rice.setBounds(640, 365, 50, 50);
+                            rice.setVisible(true);
+                            break;
+                    }
+                    rocketPnl.repaint();
                 }
-                rocketPnl.removeItem(clicked);
-                switch (clicked.getFilename()) {
-                    case "resources/boy.png":
-                        human1.setBounds(0, 365, 50, 50);
-                        human1.setVisible(true);
-                        break;
-                    case "resources/girl.png":
-                        human2.setBounds(50, 365, 50, 50);
-                        human2.setVisible(true);
-                        break;
-                    case "resources/lion.png":
-                        lion.setBounds(100, 365, 50, 50);
-                        lion.setVisible(true);
-                        break;
-                    case "resources/cow.png":
-                        cow.setBounds(150, 365, 50, 50);
-                        cow.setVisible(true);
-                        break;
-                    case "resources/rice.png":
-                        rice.setBounds(200, 365, 50, 50);
-                        rice.setVisible(true);
-                        break;
-                }
-                rocketPnl.repaint();
-            } else if (rocketPnl.getMode() == "left") {
-                ItemPanel clicked = null;
-                if (e.getX() >= 515 && e.getX() <= 555 && e.getY() >= 180 && e.getY() <= 225) {
-                    clicked = rocketPnl.getItem(0);
-                } else if (e.getX() >= 565 && e.getX() <= 610 && e.getY() >= 180 && e.getY() <= 225) {
-                    clicked = rocketPnl.getItem(1);
-                }
-                rocketPnl.removeItem(clicked);
-                switch (clicked.getFilename()) {
-                    case "resources/boy.png":
-                        human1.setBounds(440, 365, 50, 50);
-                        human1.setVisible(true);
-                        break;
-                    case "resources/girl.png":
-                        human2.setBounds(490, 365, 50, 50);
-                        human2.setVisible(true);
-                        break;
-                    case "resources/lion.png":
-                        lion.setBounds(540, 365, 50, 50);
-                        lion.setVisible(true);
-                        break;
-                    case "resources/cow.png":
-                        cow.setBounds(590, 365, 50, 50);
-                        cow.setVisible(true);
-                        break;
-                    case "resources/rice.png":
-                        rice.setBounds(640, 365, 50, 50);
-                        rice.setVisible(true);
-                        break;
-                }
-                rocketPnl.repaint();
+            } catch(Exception ex) {
+                System.out.println("don't click here!");
             }
         }
 
@@ -286,18 +386,22 @@ public class GameView extends JFrame {
     }
 
     class helpBtn_click implements MouseListener {
+
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (JOptionPane.showConfirmDialog (null, "Are you sure you wanna see the solution?","Warning", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            if (JOptionPane.showConfirmDialog(null, "Are you sure you wanna see the solution?", "Warning", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 // solution here
             }
         }
+
         @Override
         public void mousePressed(MouseEvent e) {
         }
+
         @Override
         public void mouseReleased(MouseEvent e) {
         }
+
         @Override
         public void mouseEntered(MouseEvent e) {
             try {
@@ -306,6 +410,7 @@ public class GameView extends JFrame {
                 Logger.getLogger(GameView.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
         @Override
         public void mouseExited(MouseEvent e) {
             try {
@@ -317,16 +422,20 @@ public class GameView extends JFrame {
     }
 
     class infoBtn_click implements MouseListener {
+
         @Override
         public void mouseClicked(MouseEvent e) {
             JOptionPane.showMessageDialog(mainPane, "Put rules here");
         }
+
         @Override
         public void mousePressed(MouseEvent e) {
         }
+
         @Override
         public void mouseReleased(MouseEvent e) {
         }
+
         @Override
         public void mouseEntered(MouseEvent e) {
             try {
@@ -335,6 +444,7 @@ public class GameView extends JFrame {
                 Logger.getLogger(GameView.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
         @Override
         public void mouseExited(MouseEvent e) {
             try {
@@ -342,6 +452,29 @@ public class GameView extends JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(GameView.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+    
+    class grayPnl_click implements MouseListener {
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
         }
     }
 }

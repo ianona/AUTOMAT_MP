@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import java.awt.FontMetrics;
+import java.util.List;
 
 /**
  *
@@ -24,21 +25,25 @@ import java.awt.FontMetrics;
  */
 public class StatePanel extends JPanel {
 
-    private String state;
+    private String stateName, config, left, right;
     private boolean cur;
     private int x, y;
-    private static Font monoFont = new Font(Font.MONOSPACED, Font.BOLD, 11);
+    private static Font monoFont = new Font(Font.MONOSPACED, Font.BOLD, 15);
+    private static Font monoFont2 = new Font(Font.MONOSPACED, Font.BOLD, 11);
     private static int size = 70;
 
-    public StatePanel(String state) {
+    public StatePanel(String stateName, String left, String right) {
         this.setDoubleBuffered(true);
         this.setOpaque(false);
-        this.state = state;
+        this.stateName = stateName;
+        this.left = left;
+        this.right = right;
+        this.config = left+"/"+right;
         cur = false;
         this.x = 0;
         this.y = 0;
     }
-
+    
     public void setCur(boolean cur) {
         this.cur = cur;
     }
@@ -47,8 +52,16 @@ public class StatePanel extends JPanel {
         return cur;
     }
 
-    public String getState() {
-        return state;
+    public String getStateName() {
+        return stateName;
+    }
+
+    public String getLeft() {
+        return left;
+    }
+
+    public String getRight() {
+        return right;
     }
 
     public void paintComponent(Graphics g) {
@@ -71,9 +84,14 @@ public class StatePanel extends JPanel {
         
         g.setFont(monoFont);
         FontMetrics fm = g.getFontMetrics();
-        int w = fm.stringWidth(state);
+        int w = fm.stringWidth(stateName);
         int h = fm.getAscent();
-        g.drawString(state, (size/2) - (w / 2), (size/2) + (h / 4));
+        g.drawString(stateName, (size/2) - (w / 2), (size/2) + (h / 4));
+        
+        g.setFont(monoFont2);
+        w = fm.stringWidth(config);
+        h = fm.getAscent();
+        g.drawString(config, (size/2) - (w / 2), (size/2) + h);
 
         g.dispose();
     }

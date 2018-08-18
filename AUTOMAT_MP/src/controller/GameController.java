@@ -6,6 +6,7 @@
 package controller;
 
 import java.util.Arrays;
+import view.MachineView;
 
 /**
  *
@@ -17,34 +18,33 @@ public class GameController {
     private String move;
     private String[] ship;
     
+    private MachineView mv;
+    
     GameController(){
-        earth = new String[]{"human1","human2","cow","grain","lion"};
+        earth = new String[]{"human1","human2","cow","rice","lion"};
         mars = new String[]{"","","","",""};
         ship = new String[]{"",""};
-        move = "Right";
-        gameTime();
     }
     
-    public void gameTime(){
-        // while(true){
-            //ask for the user input
-            
-            //execute
-            moveShip("human1","human2",move);
-            System.out.println("moved ship");
-            //check after ship has left
-            if(!checkPlanets(move))
-                System.out.println("Game Over");
-            System.out.println("checked planet");
-            //change move
-            if(move.equalsIgnoreCase("right"))
-                move = "Left";
-            else
-                move = "Right";
-            System.out.println("changed direction");
-        //}
+    public void updateMachine(String direction){
+        String left = "";
+        for (int i = 0; i < earth.length; i++)
+            if (earth[i] != "")
+                left += earth[i].toUpperCase().charAt(0);
+        
+        String right = "";
+        for (int i = 0; i < mars.length; i++)
+            if (mars[i] != "")
+                right += mars[i].toUpperCase().charAt(0);
+        
+        mv.updateMachine(left, right, direction);
     }
     
+    public void attach(MachineView mv){
+        this.mv = mv;
+    }
+    
+    // overloaded method to move passengers
     // Moves the ship and begins the transfer of passengers
     public void moveShip(String pass1, String pass2, String direction){
         if(direction.equalsIgnoreCase("right")){
@@ -52,8 +52,6 @@ public class GameController {
                 if(isIn(earth,pass1)){
                     removeFrom(earth,pass1);
                     addTo(mars,pass1);
-                    System.out.println(Arrays.toString(earth));
-                    System.out.println(Arrays.toString(mars));
                 }
                 else{
                     System.out.println("pass1 not in earth");
@@ -63,8 +61,6 @@ public class GameController {
                 if(isIn(earth,pass2)){
                     removeFrom(earth,pass2);
                     addTo(mars,pass2);
-                    System.out.println(Arrays.toString(earth));
-                    System.out.println(Arrays.toString(mars));
                 }
                 else{
                     System.out.println("pass2 not in earth");
@@ -76,8 +72,6 @@ public class GameController {
                 if(isIn(mars,pass1)){
                     removeFrom(mars,pass1);
                     addTo(earth,pass1);
-                    System.out.println(Arrays.toString(earth));
-                    System.out.println(Arrays.toString(mars));
                 }
                 else{
                     System.out.println("pass1 not in mars");
@@ -87,14 +81,44 @@ public class GameController {
                 if(isIn(mars,pass2)){
                     removeFrom(mars,pass2);
                     addTo(earth,pass2);
-                    System.out.println(Arrays.toString(earth));
-                    System.out.println(Arrays.toString(mars));
                 }
                 else{
                     System.out.println("pass2 not in mars");
                 }
             }
         }
+        
+        System.out.println("EARTH: " + Arrays.toString(earth));
+        System.out.println("MARS: " + Arrays.toString(mars));
+    }
+    
+    // Moves the ship and begins the transfer of passengers
+    public void moveShip(String pass1, String direction){
+        if(direction.equalsIgnoreCase("right")){
+            if (!pass1.equalsIgnoreCase("")){
+                if(isIn(earth,pass1)){
+                    removeFrom(earth,pass1);
+                    addTo(mars,pass1);
+                }
+                else{
+                    System.out.println("pass1 not in earth");
+                }
+            }
+        }
+        else{
+            if (!pass1.equalsIgnoreCase("")){
+                if(isIn(mars,pass1)){
+                    removeFrom(mars,pass1);
+                    addTo(earth,pass1);
+                }
+                else{
+                    System.out.println("pass1 not in mars");
+                }
+            }
+        }
+        
+        System.out.println("EARTH: " + Arrays.toString(earth));
+        System.out.println("MARS: " + Arrays.toString(mars));
     }
     
     // Checks if the planet the spaceship is leaving is valid
@@ -109,7 +133,7 @@ public class GameController {
     public Boolean checkEarth(){
         Boolean human1 = isIn(earth,"human1");
         Boolean human2 = isIn(earth,"human2");
-        Boolean grain = isIn(earth,"grain");
+        Boolean rice = isIn(earth,"rice");
         Boolean lion = isIn(earth,"lion");
         Boolean cow = isIn(earth,"cow");
         
@@ -122,7 +146,7 @@ public class GameController {
         if(lion && cow)
             return false;
         
-        if (cow && grain)
+        if (cow && rice)
             return false;
         
         return true;
@@ -132,7 +156,7 @@ public class GameController {
     public Boolean checkMars(){
         Boolean human1 = isIn(mars,"human1");
         Boolean human2 = isIn(mars,"human2");
-        Boolean grain = isIn(mars,"grain");
+        Boolean rice = isIn(mars,"rice");
         Boolean lion = isIn(mars,"lion");
         Boolean cow = isIn(mars,"cow");
         
@@ -145,7 +169,7 @@ public class GameController {
         if(lion && cow)
             return false;
         
-        if (cow && grain)
+        if (cow && rice)
             return false;
         
         return true;
