@@ -8,11 +8,16 @@ package view;
 import controller.GameController;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 
 /**
  *
@@ -21,19 +26,33 @@ import static javax.swing.JFrame.EXIT_ON_CLOSE;
 public class MachineView extends JFrame {
 
     private GameController controller;
-    private static int size = 71;
+    private static int size = 75;
     private List<StatePanel> states;
+    private JLabel arrows;
+    private JLayeredPane mainPane;
 
     public MachineView(GameController gc) {
         this.setSize(new Dimension(900, 600));
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setTitle("State Machine");
-        this.setLayout(null);
         controller = gc;
         states = new ArrayList<>();
+        
+        try {
+            arrows = new JLabel(new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/arrows.png"))));
+        } catch (IOException e) {
+            System.out.println("file not found");
+        }
+        
+        mainPane = new JLayeredPane();
+        mainPane.setPreferredSize(new Dimension(900, 600));
+
+        arrows.setBounds(0, 0, 900, 600);
+        mainPane.add(arrows, new Integer(0));
 
         this.initMachine();
 
+        this.add(mainPane);
         this.getContentPane().setBackground(Color.WHITE);
         this.setLocation(700, 0);
         this.setVisible(true);
@@ -122,6 +141,7 @@ public class MachineView extends JFrame {
         StatePanel sp13 = new StatePanel("RIGHT", "","HHCLR");
         states.add(sp13);
         sp13.setBounds(790, 370, size, size);
+        sp13.setFinal(true);
         this.add(sp13);
 
         StatePanel sp14 = new StatePanel("RIGHT", "L","CHHR");

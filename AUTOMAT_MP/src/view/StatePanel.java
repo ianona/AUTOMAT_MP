@@ -26,7 +26,7 @@ import java.util.List;
 public class StatePanel extends JPanel {
 
     private String stateName, config, left, right;
-    private boolean cur;
+    private boolean cur, isFinal;
     private int x, y;
     private static Font monoFont = new Font(Font.MONOSPACED, Font.BOLD, 15);
     private static Font monoFont2 = new Font(Font.MONOSPACED, Font.BOLD, 11);
@@ -40,12 +40,17 @@ public class StatePanel extends JPanel {
         this.right = right;
         this.config = left+"/"+right;
         cur = false;
+        isFinal = false;
         this.x = 0;
         this.y = 0;
     }
     
     public void setCur(boolean cur) {
         this.cur = cur;
+    }
+    
+    public void setFinal(boolean f) {
+        this.isFinal = f;
     }
 
     public boolean getCur() {
@@ -66,17 +71,24 @@ public class StatePanel extends JPanel {
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
         g.setColor(Color.BLACK);
-        g.fillOval(x-1, y-1, size+2, size+2);
+        if (!isFinal)
+            g.fillOval(x-1, y-1, size+2, size+2);
+        else{
+            g.fillOval(x-3, y-3, size+6, size+6);
+        }
 
         if (cur) {
             g.setColor(Color.YELLOW);
+        } else if (isFinal) {
+            g.setColor(Color.WHITE);
         } else {
             g.setColor(new Color(0,0,0,150));
         }
         g.fillOval(x, y, size, size);
 
-        if (cur) {
+        if (cur || isFinal) {
             g.setColor(Color.BLACK);
         } else {
             g.setColor(Color.WHITE);
