@@ -425,7 +425,15 @@ public class GameView extends JFrame {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            JOptionPane.showMessageDialog(mainPane, "Put rules here");
+            JOptionPane.showMessageDialog(mainPane,
+                    "You are a scientist, and you want to transfer five things to Mars to leave the dying earth:\n"
+                    + "two(2) Humans, one(1) Lion, one(1) Cow, and one(1) Bag of grain.\n\n"
+                    + "When the scientist isn't present:\n"
+                    + "The lion will eat the cow,\n"
+                    + "The cow will eat the grain,\n"
+                    + "and the humans will kill the lion or the cow.\n\n"
+                    + "Your spaceship can only hold two passengers, and only you can operate the rocket ship.\n"
+                    + "Find a way to transfer all the items to Mars without anything dying or being eaten.");
         }
 
         @Override
