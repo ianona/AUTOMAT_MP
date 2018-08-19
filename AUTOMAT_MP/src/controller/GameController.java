@@ -175,6 +175,19 @@ public class GameController {
         return true;
     }
     
+    public boolean checkWin(){
+        Boolean human1 = isIn(mars,"human1");
+        Boolean human2 = isIn(mars,"human2");
+        Boolean rice = isIn(mars,"rice");
+        Boolean lion = isIn(mars,"lion");
+        Boolean cow = isIn(mars,"cow");
+        
+        if (human1 && human2 && rice && lion && cow)
+            return true;
+        else
+            return false;
+    }
+    
     // Removes from given array the given value
     public void removeFrom(String[] array, String value){
         for(int i = 0; i < array.length; i++)

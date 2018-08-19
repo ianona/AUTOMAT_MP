@@ -202,7 +202,13 @@ public class GameView extends JFrame {
             JOptionPane.showMessageDialog(null, "Game Over! Program terminating...");
             System.exit(0);
         }
-
+        
+        if (controller.checkWin()) {
+            this.emptyRocket();
+            JOptionPane.showMessageDialog(null, "You Win! Program terminating...");
+            System.exit(0);
+        }
+        
         controller.updateMachine(move);
     }
 
