@@ -11,15 +11,22 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import model.Node;
 
 /**
  *
@@ -32,6 +39,9 @@ public class GameView extends JFrame {
     private JLayeredPane mainPane;
     private RocketPanel rocketPnl;
     private ItemPanel human1, human2, lion, cow, rice;
+    private List<List<Node>> solutions;
+    private JList solutionsList;
+    private JTextArea solutionsFeed;
 
     private static final Rectangle leftSide = new Rectangle(30, 120, 255, 153);
     private static final Rectangle rightSide = new Rectangle(420, 120, 255, 153);
@@ -202,13 +212,13 @@ public class GameView extends JFrame {
             JOptionPane.showMessageDialog(null, "Game Over! Program terminating...");
             System.exit(0);
         }
-        
+
         if (controller.checkWin()) {
             this.emptyRocket();
             JOptionPane.showMessageDialog(null, "You Win! Program terminating...");
             System.exit(0);
         }
-        
+
         controller.updateMachine(move);
     }
 
@@ -369,7 +379,7 @@ public class GameView extends JFrame {
                     }
                     rocketPnl.repaint();
                 }
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 System.out.println("don't click here!");
             }
         }
@@ -392,11 +402,44 @@ public class GameView extends JFrame {
     }
 
     class helpBtn_click implements MouseListener {
-
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (JOptionPane.showConfirmDialog(null, "Are you sure you wanna see the solution?", "Warning", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                // solution here
+            int x = JOptionPane.showConfirmDialog(null, "Are you sure you wanna see the solution?", "Warning", JOptionPane.YES_NO_OPTION);
+            if (x == JOptionPane.YES_OPTION) {
+                // ask controller for solutions
+                solutions = controller.getShortestPaths();
+                
+                // add solutions to a JList
+                solutionsList = new JList(solutions.toArray());
+                solutionsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+                solutionsList.setLayoutOrientation(JList.VERTICAL);
+                solutionsList.getSelectionModel().addListSelectionListener(new solution_onChange());
+                
+                // create text area to put instructions in
+                solutionsFeed = new JTextArea(5,4);
+                solutionsFeed.setEditable(false);
+                
+                // supplementary choochoo for new dialog
+                final JComponent[] inputs = new JComponent[]{
+                    new JLabel("There are " + solutions.size() + " shortest paths found."),
+                    solutionsList,
+                    solutionsFeed};
+                Object[] options = {"Got it!", "Got it! (but keep the solution please)"};
+                
+                // show new dialog for solutions
+                int n = JOptionPane.showOptionDialog(null,
+                        inputs,
+                        "Solution",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        options,
+                        options[0]);
+                
+                // clear solution if user chooses to clear
+                if (n == JOptionPane.YES_OPTION){
+                    controller.clearSolutions();
+                }
             }
         }
 
@@ -468,7 +511,7 @@ public class GameView extends JFrame {
             }
         }
     }
-    
+
     class grayPnl_click implements MouseListener {
 
         @Override
@@ -489,6 +532,30 @@ public class GameView extends JFrame {
 
         @Override
         public void mouseExited(MouseEvent e) {
+        }
+    }
+
+    // action listener for when user selects different solution
+    class solution_onChange implements ListSelectionListener {
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            //System.out.println("SELECTING: " + solutionsList.getSelectedValue());
+            List<Node> curSolution = (List<Node>) solutionsList.getSelectedValue();
+            
+            String curText = curSolution.toString();
+            
+            if (curText.equalsIgnoreCase("[n1, n2, n3, n7, n8, n11, n12, n13]"))
+                solutionsFeed.setText("kyle zach fill this up with instructions (1)");
+            else if(curText.equalsIgnoreCase("[n1, n2, n6, n7, n8, n11, n12, n13]"))
+                solutionsFeed.setText("kyle zach fill this up with instructions (2)");
+            else if(curText.equalsIgnoreCase("[n1, n2, n6, n15, n17, n14, n12, n13]"))
+                solutionsFeed.setText("kyle zach fill this up with instructions (3)");
+            else if(curText.equalsIgnoreCase("[n1, n2, n6, n15, n17, n11, n12, n13]"))
+                solutionsFeed.setText("kyle zach fill this up with instructions (4)");
+            else
+                solutionsFeed.setText("");
+
+            controller.updateMachine(curSolution);
         }
     }
 }

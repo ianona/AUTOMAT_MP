@@ -8,16 +8,8 @@ package view;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import java.awt.FontMetrics;
-import java.util.List;
 
 /**
  *
@@ -26,7 +18,7 @@ import java.util.List;
 public class StatePanel extends JPanel {
 
     private String stateName, config, left, right;
-    private boolean cur, isFinal;
+    private boolean cur, isFinal, isSol;
     private int x, y;
     private static Font monoFont = new Font(Font.MONOSPACED, Font.BOLD, 15);
     private static Font monoFont2 = new Font(Font.MONOSPACED, Font.BOLD, 11);
@@ -38,23 +30,32 @@ public class StatePanel extends JPanel {
         this.stateName = stateName;
         this.left = left;
         this.right = right;
-        this.config = left+"/"+right;
+        this.config = left + "/" + right;
         cur = false;
         isFinal = false;
+        isSol = false;
         this.x = 0;
         this.y = 0;
     }
-    
+
     public void setCur(boolean cur) {
         this.cur = cur;
     }
-    
+
     public void setFinal(boolean f) {
         this.isFinal = f;
+    }
+    
+    public void setSol(boolean s) {
+        this.isSol = s;
     }
 
     public boolean getCur() {
         return cur;
+    }
+
+    public boolean getSol() {
+        return isSol;
     }
 
     public String getStateName() {
@@ -71,20 +72,22 @@ public class StatePanel extends JPanel {
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
+
         g.setColor(Color.BLACK);
-        if (!isFinal)
-            g.fillOval(x-1, y-1, size+2, size+2);
-        else{
-            g.fillOval(x-3, y-3, size+6, size+6);
+        if (!isFinal) {
+            g.fillOval(x - 1, y - 1, size + 2, size + 2);
+        } else {
+            g.fillOval(x - 3, y - 3, size + 6, size + 6);
         }
 
         if (cur) {
             g.setColor(Color.YELLOW);
+        } else if (isSol) {
+            g.setColor(Color.GREEN);
         } else if (isFinal) {
             g.setColor(Color.WHITE);
         } else {
-            g.setColor(new Color(0,0,0,150));
+            g.setColor(new Color(0, 0, 0, 150));
         }
         g.fillOval(x, y, size, size);
 
@@ -93,17 +96,17 @@ public class StatePanel extends JPanel {
         } else {
             g.setColor(Color.WHITE);
         }
-        
+
         g.setFont(monoFont);
         FontMetrics fm = g.getFontMetrics();
         int w = fm.stringWidth(stateName);
         int h = fm.getAscent();
-        g.drawString(stateName, (size/2) - (w / 2), (size/2) + (h / 4));
-        
+        g.drawString(stateName, (size / 2) - (w / 2), (size / 2) + (h / 4));
+
         g.setFont(monoFont2);
         w = fm.stringWidth(config);
         h = fm.getAscent();
-        g.drawString(config, (size/2) - (w / 2), (size/2) + h);
+        g.drawString(config, (size / 2) - (w / 2), (size / 2) + h);
 
         g.dispose();
     }

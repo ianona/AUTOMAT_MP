@@ -6,6 +6,10 @@
 package controller;
 
 import java.util.Arrays;
+import java.util.List;
+import model.GraphSingleton;
+import model.GraphSolution;
+import model.Node;
 import view.MachineView;
 
 /**
@@ -15,17 +19,18 @@ import view.MachineView;
 public class GameController {
     private String[] earth;
     private String[] mars;
-    private String move;
     private String[] ship;
     
     private MachineView mv;
+    private GraphSolution gs;
     
-    GameController(){
+    public GameController(){
         earth = new String[]{"human1","human2","cow","rice","lion"};
         mars = new String[]{"","","","",""};
         ship = new String[]{"",""};
     }
     
+    // updates machine per step made
     public void updateMachine(String direction){
         String left = "";
         for (int i = 0; i < earth.length; i++)
@@ -40,8 +45,22 @@ public class GameController {
         mv.updateMachine(left, right, direction);
     }
     
+    // update machine with the solution nodes
+    public void updateMachine(List<Node> nodes){
+        mv.updateMachine(nodes);
+    }
+    
+    // clear machine view of any solution
+    public void clearSolutions(){
+        mv.clearSol();
+    }
+    
     public void attach(MachineView mv){
         this.mv = mv;
+    }
+    
+    public void attach(GraphSolution gs){
+        this.gs = gs;
     }
     
     // overloaded method to move passengers
@@ -213,5 +232,10 @@ public class GameController {
             if(element.equalsIgnoreCase(value))
                 return true;
         return false;
+    }
+    
+    public List<List<Node>> getShortestPaths(){
+        // returns all shortest paths from initial state to final state
+        return gs.findAllShortestPaths(GraphSingleton.n1, GraphSingleton.n13);
     }
 }

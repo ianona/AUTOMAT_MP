@@ -5,28 +5,35 @@
  */
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author ianona
  */
 public class Node {
-    private String nodeName;
-    private List<Node> adjacentNodes;
-    
-    public Node(String nodeName) {
-        this.nodeName = nodeName;
-        adjacentNodes = new ArrayList<>();
+
+    private String nodeName, left, right;
+    private int nodeNumber;
+
+    public Node(String left, String right, int nodeNumber) {
+        this.left = left;
+        this.right = right;
+        this.nodeName = left+"/"+right;
+        this.nodeNumber = nodeNumber;
+    }
+
+    public String getNode() {
+        return nodeName;
     }
     
-    public void addAdjacent(Node n){
-        adjacentNodes.add(n);
+    public String toString() {
+        return "n"+nodeNumber;
     }
-    
-    public void addAdjacent(Node[] nodes){
-        for(Node n:nodes)
-            adjacentNodes.add(n);
+
+    public String getLeft() {
+        return left;
+    }
+
+    public String getRight() {
+        return right;
     }
 }

@@ -5,6 +5,7 @@
  */
 package controller;
 
+import model.GraphSolution;
 import view.GameView;
 import view.MachineView;
 
@@ -20,8 +21,10 @@ public class AUTOMAT_MP {
     public static void main(String[] args) {
         GameController gc = new GameController();
         GameView gv = new GameView(gc);
+        GraphSolution gs = new GraphSolution();
         MachineView mv = new MachineView(gc);
         gc.attach(mv);
+        gc.attach(gs);
     }
     
 }
