@@ -242,6 +242,7 @@ public class GameView extends JFrame {
         if(choice == JOptionPane.YES_OPTION){
             System.out.println("Clicked retry");
             controller.reset();
+            controller.clearSolutions();
             this.reset();
         }
         else{
