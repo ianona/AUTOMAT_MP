@@ -219,11 +219,11 @@ public class GameView extends JFrame {
             displayMessage("Game Over! Program terminating...");
         }
 
+        controller.updateMachine(move);
+        
         if (controller.checkWin()) {
             displayMessage("You Win! You solved the puzzle in " + controller.getMoveCount() + " moves!");
         }
-
-        controller.updateMachine(move);
     }
 
     public void displayMessage(String message){
