@@ -31,7 +31,8 @@ public class MachineView extends JFrame {
     private List<StatePanel> states;
     private JLabel arrows;
     private JLayeredPane mainPane;
-
+    private StatePanel initial;
+    
     public MachineView(GameController gc) {
         this.setSize(new Dimension(900, 600));
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -47,19 +48,25 @@ public class MachineView extends JFrame {
 
         mainPane = new JLayeredPane();
         mainPane.setPreferredSize(new Dimension(900, 600));
+        
+        this.reset();
+    }
 
+    public void reset(){
+        this.remove(mainPane);
+        mainPane.removeAll();
         arrows.setBounds(0, 0, 900, 600);
         mainPane.add(arrows, new Integer(0));
 
         this.initMachine();
-
+        this.initial.repaint();
         this.add(mainPane);
         this.getContentPane().setBackground(Color.WHITE);
         this.setLocation(700, 0);
         this.setVisible(true);
         this.setResizable(false);
     }
-
+    
     public void updateMachine(String left, String right, String direction) {
         for (StatePanel sp : states) {
             if (sp.getStateName().equalsIgnoreCase(direction)
@@ -105,6 +112,7 @@ public class MachineView extends JFrame {
         StatePanel sp1 = new StatePanel("LEFT", "HHCLR", "");
         sp1.setBounds(20, 40, size, size);
         sp1.setCur(true);
+        initial = sp1;
         this.add(sp1);
         states.add(sp1);
 

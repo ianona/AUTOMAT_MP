@@ -24,6 +24,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import model.Node;
@@ -51,10 +52,16 @@ public class GameView extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setTitle("AUTOMAT MP");
         controller = gc;
-
+        
         mainPane = new JLayeredPane();
         mainPane.setPreferredSize(new Dimension(700, 500));
+        
+        this.reset();
+    }
 
+    public void reset(){
+        mainPane.removeAll();
+        
         try {
             bgImage = new JLabel(new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/bg.png"))));
             leftPnl = new JLabel(new ImageIcon(ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/panel.png"))));
@@ -133,7 +140,7 @@ public class GameView extends JFrame {
         this.setVisible(true);
         this.setResizable(false);
     }
-
+    
     public void emptyRocket() {
         if (rocketPnl.getMode() == "right") {
             for (int i = rocketPnl.getItems().size() - 1; i > -1; i--) {
@@ -209,19 +216,39 @@ public class GameView extends JFrame {
         }
 
         if (!controller.checkPlanets(move)) {
-            JOptionPane.showMessageDialog(null, "Game Over! Program terminating...");
-            System.exit(0);
+            displayMessage("Game Over! Program terminating...");
         }
 
         if (controller.checkWin()) {
-            this.emptyRocket();
-            JOptionPane.showMessageDialog(null, "You Win! Program terminating...");
-            System.exit(0);
+            displayMessage("You Win! You solved the puzzle in " + controller.getMoveCount() + " moves!");
         }
 
         controller.updateMachine(move);
     }
 
+    public void displayMessage(String message){
+        this.emptyRocket();
+        
+        String[] options = {"Retry?","Quit"};
+        int choice = JOptionPane.showOptionDialog(null, 
+        message, 
+        "", 
+        JOptionPane.YES_NO_OPTION, 
+        JOptionPane.INFORMATION_MESSAGE, 
+        null, 
+        options, 
+        options[0]);
+        
+        if(choice == JOptionPane.YES_OPTION){
+            System.out.println("Clicked retry");
+            controller.reset();
+            this.reset();
+        }
+        else{
+            System.exit(0);
+        }
+    }
+    
     class RBtn_click implements MouseListener {
 
         @Override
@@ -416,7 +443,7 @@ public class GameView extends JFrame {
                 solutionsList.getSelectionModel().addListSelectionListener(new solution_onChange());
                 
                 // create text area to put instructions in
-                solutionsFeed = new JTextArea(5,4);
+                solutionsFeed = new JTextArea(5,6);
                 solutionsFeed.setEditable(false);
                 
                 // supplementary choochoo for new dialog
@@ -425,6 +452,8 @@ public class GameView extends JFrame {
                     solutionsList,
                     solutionsFeed};
                 Object[] options = {"Got it!", "Got it! (but keep the solution please)"};
+                
+                UIManager.put("OptionPane.minimumSize",new Dimension(270, 270));
                 
                 // show new dialog for solutions
                 int n = JOptionPane.showOptionDialog(null,
@@ -545,13 +574,41 @@ public class GameView extends JFrame {
             String curText = curSolution.toString();
             
             if (curText.equalsIgnoreCase("[n1, n2, n3, n7, n8, n11, n12, n13]"))
-                solutionsFeed.setText("kyle zach fill this up with instructions (1)");
+                solutionsFeed.setText("Step 1: Send Lion and Cow to Mars\n "
+                        + "Step 2: Send Cow to Earth \n "
+                        + "Step 3: Send Cow and Rice to Mars \n"
+                        + "Step 4: Send Cow to Earth \n"
+                        + "Step 5: Send Both Humans to Mars \n"
+                        + "Step 6: Send Lion to Earth \n"
+                        + "Step 7: Send Lion and Cow to Mars"
+                        );
             else if(curText.equalsIgnoreCase("[n1, n2, n6, n7, n8, n11, n12, n13]"))
-                solutionsFeed.setText("kyle zach fill this up with instructions (2)");
+                solutionsFeed.setText("Step 1: Send Lion and Cow to Mars\n "
+                        + "Step 2: Send Lion to Earth \n "
+                        + "Step 3: Send Lion and Rice to Mars \n"
+                        + "Step 4: Send Cow to Earth \n"
+                        + "Step 5: Send Both Humans to Mars \n"
+                        + "Step 6: Send Lion to Earth \n"
+                        + "Step 7: Send Lion and Cow to Mars"
+                        );
             else if(curText.equalsIgnoreCase("[n1, n2, n6, n15, n17, n14, n12, n13]"))
-                solutionsFeed.setText("kyle zach fill this up with instructions (3)");
+                solutionsFeed.setText("Step 1: Send Lion and Cow to Mars\n "
+                        + "Step 2: Send Lion to Earth \n "
+                        + "Step 3: Send Both Humans to Mars \n"
+                        + "Step 4: Send Cow to Earth \n"
+                        + "Step 5: Send Cow and Rice to Mars \n"
+                        + "Step 6: Send Cow to Earth \n"
+                        + "Step 7: Send Lion and Cow to Mars"
+                        );
             else if(curText.equalsIgnoreCase("[n1, n2, n6, n15, n17, n11, n12, n13]"))
-                solutionsFeed.setText("kyle zach fill this up with instructions (4)");
+                solutionsFeed.setText("Step 1: Send Lion and Cow to Mars\n "
+                        + "Step 2: Send Lion to Earth \n "
+                        + "Step 3: Send Both Humans to Mars \n"
+                        + "Step 4: Send Cow to Earth \n"
+                        + "Step 5: Send Lion and Rice to Mars \n"
+                        + "Step 6: Send Lion to Earth \n"
+                        + "Step 7: Send Lion and Cow to Mars"
+                        );
             else
                 solutionsFeed.setText("");
 

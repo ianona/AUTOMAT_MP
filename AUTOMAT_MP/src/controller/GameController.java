@@ -24,10 +24,25 @@ public class GameController {
     private MachineView mv;
     private GraphSolution gs;
     
+    private int moveCount;
+    
     public GameController(){
+        reset();
+    }
+    
+    public void reset(){
         earth = new String[]{"human1","human2","cow","rice","lion"};
         mars = new String[]{"","","","",""};
         ship = new String[]{"",""};
+        moveCount = 1;
+    }
+    
+    public void incrementMove(){
+        moveCount++;
+    }
+    
+    public int getMoveCount(){
+        return moveCount;
     }
     
     // updates machine per step made
@@ -43,6 +58,7 @@ public class GameController {
                 right += mars[i].toUpperCase().charAt(0);
         
         mv.updateMachine(left, right, direction);
+        incrementMove();
     }
     
     // update machine with the solution nodes
