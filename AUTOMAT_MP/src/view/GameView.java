@@ -215,11 +215,11 @@ public class GameView extends JFrame {
             controller.moveShip(rocketPnl.getItem(0).getType(), rocketPnl.getItem(1).getType(), move);
         }
 
+        controller.updateMachine(move);
+        
         if (!controller.checkPlanets(move)) {
             displayMessage("Game Over! Program terminating...");
         }
-
-        controller.updateMachine(move);
         
         if (controller.checkWin()) {
             displayMessage("You Win! You solved the puzzle in " + controller.getMoveCount() + " moves!");
