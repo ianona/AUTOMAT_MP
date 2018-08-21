@@ -25,6 +25,7 @@ public class GameController {
     private GraphSolution gs;
     
     private int moveCount;
+    private int ew;
     
     public GameController(){
         reset();
@@ -35,6 +36,11 @@ public class GameController {
         mars = new String[]{"","","","",""};
         ship = new String[]{"",""};
         moveCount = 0;
+        if(ew == 1){
+            System.out.println("You disgust me");
+            mv.reset();
+        }
+        ew = 1;
     }
     
     public void incrementMove(){

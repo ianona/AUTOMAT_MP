@@ -53,12 +53,14 @@ public class MachineView extends JFrame {
     }
 
     public void reset(){
+        System.out.println("ew");
         this.remove(mainPane);
         mainPane.removeAll();
         arrows.setBounds(0, 0, 900, 600);
         mainPane.add(arrows, new Integer(0));
 
         this.initMachine();
+        states.get(0).setCur(true);
         this.initial.repaint();
         this.add(mainPane);
         this.getContentPane().setBackground(Color.WHITE);
