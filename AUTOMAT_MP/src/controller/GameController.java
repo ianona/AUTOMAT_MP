@@ -34,7 +34,7 @@ public class GameController {
         earth = new String[]{"human1","human2","cow","rice","lion"};
         mars = new String[]{"","","","",""};
         ship = new String[]{"",""};
-        moveCount = 1;
+        moveCount = 0;
     }
     
     public void incrementMove(){
